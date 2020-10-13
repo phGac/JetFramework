@@ -2,6 +2,7 @@
     "name": "harstat/jet-framework",
     "description": "",
     "type": "library",
+    "version": "0.1",
     "require": {
         "altorouter/altorouter": "^2.0",
         "ext-json": "*",
