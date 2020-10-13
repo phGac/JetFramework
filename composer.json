@@ -1,0 +1,23 @@
+{
+    "name": "balad/jet-framework",
+    "description": "",
+    "type": "library",
+    "require": {
+        "altorouter/altorouter": "^2.0",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Philippe Gac",
+            "email": "baladaphilippe@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Jet": "src"
+        }
+    }
+}

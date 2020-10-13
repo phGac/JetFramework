@@ -1,0 +1,389 @@
+<?php
+
+const _HOME = __DIR__ . '/../../..';
+const _SRC = _HOME . '/src';
+const _TMP = _HOME . '/tmp';
+const _TESTS = _HOME . '/tests';
+const _PUBLIC = _HOME . '/public';
+const _APP = _SRC . '/App';
+const _CONTROLLERS = _APP . '/Controllers';
+const _ENTITIES = _APP . '/Entities';
+const _SERVICES = _APP . '/Services';
+
+class ConsoleOption {
+    const FOREGROUNDS = [
+        'bold'         => '1',    'dim'          => '2',
+        'black'        => '0;30', 'dark_gray'    => '1;30',
+        'blue'         => '0;34', 'light_blue'   => '1;34',
+        'green'        => '0;32', 'light_green'  => '1;32',
+        'cyan'         => '0;36', 'light_cyan'   => '1;36',
+        'red'          => '0;31', 'light_red'    => '1;31',
+        'purple'       => '0;35', 'light_purple' => '1;35',
+        'brown'        => '0;33', 'yellow'       => '1;33',
+        'light_gray'   => '0;37', 'white'        => '1;37',
+        'normal'       => '0;39',
+    ];
+    const BACKGROUNDS = [
+        'black'        => '40',   'red'          => '41',
+        'green'        => '42',   'yellow'       => '43',
+        'blue'         => '44',   'magenta'      => '45',
+        'cyan'         => '46',   'light_gray'   => '47',
+    ];
+    const OPTIONS = [
+        'underline'    => '4',    'blink'         => '5',
+        'reverse'      => '7',    'hidden'        => '8',
+    ];
+    const EOF = "\n";
+}
+
+class Console {
+    private $args;
+    private $help;
+
+    function __construct()
+    {
+        $this->args = [];
+        $this->help = [['Undefined']];
+    }
+
+    /**
+     * @param array $arguments
+     * @param string|null $delimiter
+     */
+    function setArgs(array $arguments, $delimiter = null)
+    {
+        $args = $arguments;
+        if(gettype($delimiter) == 'string') {
+            $args = [];
+            for ($i = 1; $i < count($arguments); $i++) {
+                $arg_split = explode($delimiter, $arguments[$i]);
+                if(count($arg_split) == 1) $arg_split[1] = $arguments[$i];
+                $args[$arg_split[0]] = $arg_split[1];
+            }
+        }
+
+        $this->args = $args;
+    }
+
+    /**
+     * @param string ...$names
+     * @return string|null
+     */
+    function getArg(...$names)
+    {
+        $args = (array_filter(array_keys($this->args), function($key) use ($names) { return in_array($key, $names); }));
+        return (count($args) > 0) ? $this->args[ $args[0] ] : null;
+    }
+
+    /**
+     * @param string|null $text
+     * @param bool $print
+     * @param array $options
+     * @return array
+     */
+    function out($text, $print = true, $options = [])
+    {
+        if($print) {
+            $EOF = ConsoleOption::EOF;
+            $finalText = $EOF;
+            if($text != null) {
+                $finalText = '';
+                if(count($options) !== 0) {
+                    if(isset($options['foreground'])) {
+                        $color = ConsoleOption::FOREGROUNDS[ $options['foreground'] ];
+                        $finalText .= "\033[{$color}m";
+                    }
+                    if(isset($options['background'])) {
+                        $color = ConsoleOption::BACKGROUNDS[ $options['background'] ];
+                        $finalText .= "\033[{$color}m";
+                    }
+                    if(isset($options['option'])) {
+                        $color = ConsoleOption::OPTIONS[ $options['option'] ];
+                        $finalText .= "\033[{$color}m";
+                    }
+                    $finalText .= "$text\033[0m";
+                }
+                else {
+                    $finalText = $text;
+                }
+
+                $finalText = "$finalText$EOF";
+            }
+
+            echo $finalText;
+        }
+
+        return [$text, $options];
+    }
+
+    function arrayOut(array $outs)
+    {
+        foreach ($outs as $out) {
+            $text = null;
+            $options = [];
+            if(isset($out[0])) $text = $out[0];
+            if(isset($out[1])) $options = $out[1];
+
+            $this->out($text, true, $options);
+        }
+    }
+
+    /**
+     * @param string|null $header
+     * @param string|null $footer
+     * @param array $commands
+     */
+    function setHelp($header, $footer, array $commands)
+    {
+        $lines = [
+            [ "\t\t==== HELP ====", [ 'foreground' => 'white', 'background' => 'cyan' ] ],
+            [ $header ],
+            [], // new line
+            [ 'Commands', [ 'foreground' => 'green', 'option' => 'underline' ] ],
+        ];
+        foreach ($commands as $command) {
+            $lines[] = [ "\t{$command[0]}", [ 'foreground' => 'black' ] ];
+            foreach ($command[1] as $text) {
+                $lines[] = [ "\t\t{$text}" ];
+            }
+        }
+        $lines[] = [ $footer ];
+        $this->help = $lines;
+    }
+
+    function printHelp()
+    {
+        $this->arrayOut($this->help);
+    }
+
+    /**
+     * @param $dir_path
+     * @param array $options
+     */
+    function dir($dir_path, $options = [ 'delete' => false, 'recursive' => false, 'print' => true ])
+    {
+        try {
+            if(is_dir($dir_path)) {
+                if(isset($options['delete']) && $options['delete']) {
+                    if($options['recursive']) {
+
+                        if (PHP_OS === 'Windows') {
+                            exec(sprintf("rd /s /q %s", escapeshellarg($dir_path)));
+                        }
+                        else {
+                            exec(sprintf("rm -rf %s", escapeshellarg($dir_path)));
+                        }
+
+                    }
+                    else {
+                        rmdir($dir_path);
+                    }
+                }
+            }
+            else if(mkdir($dir_path)) {
+                // success create dir
+            }
+            else {
+                // error create dir
+            }
+        }
+        catch (Exception $e) {
+            //
+        }
+
+    }
+}
+
+class PhpClassGenerator {
+    private $namespace;
+    private $implementations;
+    private $extension;
+    private $uses;
+
+    private $name;
+    private $functions;
+
+    function __construct($name = null)
+    {
+        $this->name = $name;
+        $this->namespace = null;
+        $this->implementations = [];
+        $this->extension = [];
+        $this->functions = [];
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @param string $namespace
+     * @return PhpClassGenerator
+     */
+    function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
+        return $this;
+    }
+
+    /**
+     * @param string $class
+     * @return PhpClassGenerator
+     */
+    function addImplementation($class)
+    {
+        $this->implementations[$class] = $class;
+        return $this;
+    }
+
+    /**
+     * @param string $class
+     * @return PhpClassGenerator
+     */
+    function setExtension($class)
+    {
+        $this->extension = $class;
+        return $this;
+    }
+
+    /**
+     * @param string $class
+     * @return $this
+     */
+    function addUse($class)
+    {
+        $this->uses[$class] = $class;
+        return $this;
+    }
+
+    function addFunction($name, $protection = null, ...$params)
+    {
+        $this->functions[$name] = [
+            'name' => $name,
+            'protection' => $protection,
+            'params' => $params,
+            'code' => []
+        ];
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string[] $code
+     */
+    function setCodeFunction($name, array $code)
+    {
+        $this->functions[$name]['code'] = $code;
+    }
+
+    function __toString()
+    {
+        $code = "<?php\n\n";
+        if($this->namespace != null) $code .= "namespace {$this->namespace};\n\n";
+        foreach ($this->uses as $use) {
+            $code .= "use {$use};\n";
+        }
+        $code .= "\nclass {$this->name}";
+        if($this->extension != null) {
+            $code .= " extends {$this->extension}";
+        }
+        if(count($this->implementations) > 0) {
+            $implementations = implode(', ', $this->implementations);
+            $code .= " implements $implementations";
+        }
+        $code .= "\n{\n";
+        foreach ($this->functions as $function) {
+            $params = implode(', ', $function['params']);
+            $code .= "\tfunction {$function['name']}($params)\n\t{\n";
+            if(count($function['code']) > 0) {
+                foreach ($function['code'] as $line) {
+                    $code .= "\t\t$line\n";
+                }
+            }
+            else {
+                $code .= "\t\t// TODO: Implement {$function['name']}() method.\n";
+            }
+            $code .= "\t}\n\n";
+        }
+
+        $code .= "}\n";
+        return $code;
+    }
+}
+
+$console = new Console();
+$console->setArgs($argv, '=');
+
+$commands = [
+    [ 'help', [ 'Ver este listado' ] ],
+    [ 'init', [ 'Inicializar proyecto', 'Crea los directorios y estructura del proyecto' ] ],
+    [ 'controller=<name>', [ 'Genera una clase `Controller`' ] ],
+    [ 'entity=<name>', [ 'Genera una clase `Entity`'] ],
+    [ 'service=<name>', [ 'Genera una clase `Service`' ] ]
+];
+
+$console->setHelp('Jet Framework Cli - version 0.1', null, $commands);
+
+if(($argValue = $console->getArg('help', '-h')) != null) {
+    $console->printHelp();
+    return;
+}
+
+if($console->getArg('init') != null) {
+    $console->dir(_SRC);
+    $console->dir(_TMP);
+    $console->dir(_TESTS);
+    $console->dir(_PUBLIC);
+    $console->dir(_APP);
+    $console->dir(_CONTROLLERS);
+    $console->dir(_ENTITIES);
+    $console->dir(_SERVICES);
+    return;
+}
+
+if(($argValue = $console->getArg('controller', '-c')) != null) {
+    $class = new PhpClassGenerator();
+    $class->setName($argValue)
+            ->setNamespace('App\Controller')
+            ->addImplementation('Controller')
+            ->addUse('Jet\Controller\Controller')
+            ->addUse('Jet\Request\Request')
+            ->addUse('Jet\Request\Response')
+            ->addFunction('index', null, 'Request $req', 'Response $res')
+            ->addFunction('create', null, 'Request $req', 'Response $res')
+            ->addFunction('show', null, 'Request $req', 'Response $res')
+            ->addFunction('edit', null, 'Request $req', 'Response $res')
+            ->addFunction('update', null, 'Request $req', 'Response $res')
+            ->addFunction('destroy', null, 'Request $req', 'Response $res');
+
+    $text = $class->__toString();
+    file_put_contents(_CONTROLLERS . '/' . $argValue . 'Controller.php', $text);
+    return;
+}
+
+if(($argValue = $console->getArg('entity', '-e')) != null) {
+    $class = new PhpClassGenerator();
+    $class->setName($argValue)
+        ->setNamespace('App\Entities')
+        ->setExtension('Entity')
+        ->addUse('Jet\Db\Entity')
+        ->addUse('Jet\Db\Connection')
+        ->addUse("Util\\Validators\\{$argValue}Validator")
+        ->addFunction('__construct', null, 'Connection $db')
+        ->addFunction('save', null, 'array $data = []', '$where = null')
+        ->setCodeFunction('__construct', [
+            'parent::__construct($db);',
+            '$this->_validator = new ' . $argValue . 'Validator();',
+            '$this->_tableName = \'' . $argValue . '\';'
+        ]);
+
+    $text = $class->__toString();
+    file_put_contents(_ENTITIES . '/' . $argValue . 'Entity.php', $text);
+    return;
+}

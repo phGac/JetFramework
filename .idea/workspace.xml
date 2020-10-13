@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d735ae9c-b5bb-4563-9e64-19d18ff2fe14" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="composer.json" />
+      </list>
+    </option>
+  </component>
+  <component name="PhpDebugGeneral" listening_started="true" />
+  <component name="PhpServers">
+    <servers>
+      <server host="127.0.0.1" id="33b0ab14-669f-4311-b947-e6a0697702a9" name="Local" />
+      <server host="127.0.0.1" id="73a4be19-2807-4852-b2ba-6d8c74c61005" name="127.0.0.1" port="3000" />
+    </servers>
+  </component>
+  <component name="ProjectId" id="1ihLclIJsftWqtDuXn87U9hATzX" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="php.override.implement.member.chooser.php.doc" value="NONE" />
+    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\_Programming\_Projects\me\PHP\JetFramework\src\Jet\Middleware\Pipe" />
+      <recent name="D:\_Programming\_Projects\me\PHP\JetFramework\src\Jet" />
+      <recent name="D:\_Programming\_Projects\me\PHP\YetFramework\src\Request" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Debug" type="PhpRemoteDebugRunConfigurationType" factoryName="PHP Remote Debug" filter_connections="FILTER" server_name="Local" session_id="PHPSTORM">
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d735ae9c-b5bb-4563-9e64-19d18ff2fe14" name="Default Changelist" comment="" />
+      <created>1602354958872</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1602354958872</updated>
+      <workItem from="1602354959952" duration="834000" />
+      <workItem from="1602355829696" duration="17133000" />
+      <workItem from="1602431148116" duration="5551000" />
+      <workItem from="1602447896654" duration="3701000" />
+      <workItem from="1602465788505" duration="1756000" />
+      <workItem from="1602522022166" duration="16398000" />
+      <workItem from="1602558683360" duration="9236000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="260" y="19" key="#Servers" timestamp="1602366506409">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="260" y="19" key="#Servers/0.0.1360.728@0.0.1360.728" timestamp="1602366506409" />
+    <state x="134" y="14" width="1092" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602366480314">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="134" y="14" width="1092" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1360.728@0.0.1360.728" timestamp="1602366480314" />
+    <state x="458" y="166" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1602360980184">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="458" y="166" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1360.728@0.0.1360.728" timestamp="1602360980184" />
+    <state x="139" y="92" key="#com.intellij.ide.util.MemberChooser" timestamp="1602434523401">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="139" y="92" key="#com.intellij.ide.util.MemberChooser/0.0.1360.728@0.0.1360.728" timestamp="1602434523401" />
+    <state x="458" y="189" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1602366809617">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="458" y="189" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1360.728@0.0.1360.728" timestamp="1602366809617" />
+    <state x="386" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1602450784433">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="386" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1360.728@0.0.1360.728" timestamp="1602450784433" />
+    <state x="410" y="119" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1602562926265">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="410" y="119" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1360.728@0.0.1360.728" timestamp="1602562926265" />
+    <state width="490" height="466" key="DebuggerActiveHint" timestamp="1602522336362">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="490" height="466" key="DebuggerActiveHint/0.0.1360.728@0.0.1360.728" timestamp="1602522336362" />
+    <state width="1317" height="187" key="GridCell.Tab.0.bottom" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.0.bottom/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.0.center" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.0.center/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.0.left" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.0.left/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.0.right" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.0.right/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.1.bottom" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.1.bottom/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.1.center" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.1.center/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.1.left" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.1.left/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.1.right" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.1.right/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.2.bottom" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.2.bottom/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.2.center" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.2.center/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.2.left" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.2.left/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state width="1317" height="187" key="GridCell.Tab.2.right" timestamp="1602551828800">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state width="1317" height="187" key="GridCell.Tab.2.right/0.0.1360.728@0.0.1360.728" timestamp="1602551828800" />
+    <state x="383" y="98" key="NewPhpClassDialog" timestamp="1602448245307">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="383" y="98" key="NewPhpClassDialog/0.0.1360.728@0.0.1360.728" timestamp="1602448245307" />
+    <state x="181" y="9" key="SettingsEditor" timestamp="1602374918636">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="181" y="9" key="SettingsEditor/0.0.1360.728@0.0.1360.728" timestamp="1602374918636" />
+    <state x="343" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1602356096630">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="343" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1360.728@0.0.1360.728" timestamp="1602356096630" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/src/Jet/App.php</url>
+          <line>160</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
