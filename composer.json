@@ -3,6 +3,7 @@
     "description": "",
     "type": "library",
     "version": "0.1",
+    "minimum-stability": "dev",
     "require": {
         "altorouter/altorouter": "^2.0",
         "ext-json": "*",
