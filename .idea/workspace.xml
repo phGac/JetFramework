@@ -28,6 +28,12 @@
       <server host="127.0.0.1" id="73a4be19-2807-4852-b2ba-6d8c74c61005" name="127.0.0.1" port="3000" />
     </servers>
   </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/altorouter/altorouter" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+    </include_path>
+  </component>
   <component name="ProjectId" id="1ihLclIJsftWqtDuXn87U9hATzX" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -39,7 +45,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="NONE" />
-    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.CommitDialog" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -68,7 +74,7 @@
       <workItem from="1602447896654" duration="3701000" />
       <workItem from="1602465788505" duration="1756000" />
       <workItem from="1602522022166" duration="16398000" />
-      <workItem from="1602558683360" duration="9236000" />
+      <workItem from="1602558683360" duration="10137000" />
     </task>
     <servers />
   </component>
@@ -160,10 +166,14 @@
       <screen x="0" y="0" width="1360" height="728" />
     </state>
     <state x="383" y="98" key="NewPhpClassDialog/0.0.1360.728@0.0.1360.728" timestamp="1602448245307" />
-    <state x="181" y="9" key="SettingsEditor" timestamp="1602374918636">
+    <state x="181" y="9" key="SettingsEditor" timestamp="1602568859609">
       <screen x="0" y="0" width="1360" height="728" />
     </state>
-    <state x="181" y="9" key="SettingsEditor/0.0.1360.728@0.0.1360.728" timestamp="1602374918636" />
+    <state x="181" y="9" key="SettingsEditor/0.0.1360.728@0.0.1360.728" timestamp="1602568859609" />
+    <state x="336" y="162" key="run.anything.popup" timestamp="1602568671980">
+      <screen x="0" y="0" width="1360" height="728" />
+    </state>
+    <state x="336" y="162" key="run.anything.popup/0.0.1360.728@0.0.1360.728" timestamp="1602568671980" />
     <state x="343" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1602356096630">
       <screen x="0" y="0" width="1360" height="728" />
     </state>
