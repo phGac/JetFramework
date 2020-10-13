@@ -1,6 +1,6 @@
 <?php
 
-const _HOME = __DIR__ . '/../../..';
+const _HOME = __DIR__ . '/../../../..';
 const _SRC = _HOME . '/src';
 const _TMP = _HOME . '/tmp';
 const _TESTS = _HOME . '/tests';
