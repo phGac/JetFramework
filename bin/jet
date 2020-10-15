@@ -9,6 +9,29 @@ const _APP = _SRC . '/App';
 const _CONTROLLERS = _APP . '/Controllers';
 const _ENTITIES = _APP . '/Entities';
 const _SERVICES = _APP . '/Services';
+const _MIDDLEWARES = _SRC . '/middlewares';
+const _ROUTES = _SRC . '/routes';
+const _Util = _SRC . '/Util';
+const _VIEWS = _SRC . '/views';
+
+/**
+ * Recursive remove directory
+ * @param string $dir
+ */
+function rrmDir($dir) {
+    if (is_dir($dir)) {
+        $objects = scandir($dir);
+        foreach ($objects as $object) {
+            if ($object != "." && $object != "..") {
+                if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && !is_link($dir."/".$object))
+                    rrmdir($dir. DIRECTORY_SEPARATOR .$object);
+                else
+                    unlink($dir. DIRECTORY_SEPARATOR .$object);
+            }
+        }
+        rmdir($dir);
+    }
+}
 
 class ConsoleOption {
     const FOREGROUNDS = [
@@ -157,34 +180,43 @@ class Console {
     }
 
     /**
+     * @param string $text
+     * @param bool $success
+     * @param string|null $prefix
+     */
+    function check($text, $success = true, $prefix = "\t")
+    {
+        $symbol = ($success) ? "\xe2\x9c\x93" : "\xe2\x9c\x97";
+        $this->out("{$prefix}[{$symbol}]\t{$text}", true, []);
+    }
+
+    /**
      * @param $dir_path
      * @param array $options
      */
     function dir($dir_path, $options = [ 'delete' => false, 'recursive' => false, 'print' => true ])
     {
         try {
+            $dirname = basename($dir_path);
+            $success = true;
+            $type = "Create";
             if(is_dir($dir_path)) {
                 if(isset($options['delete']) && $options['delete']) {
-                    if($options['recursive']) {
-
-                        if (PHP_OS === 'Windows') {
-                            exec(sprintf("rd /s /q %s", escapeshellarg($dir_path)));
-                        }
-                        else {
-                            exec(sprintf("rm -rf %s", escapeshellarg($dir_path)));
-                        }
-
+                    $type = "Remove";
+                    if(isset($options['recursive']) && $options['recursive']) {
+                        rrmDir($dir_path);
                     }
-                    else {
-                        rmdir($dir_path);
+                    else if(! rmdir($dir_path)) {
+                        $success = false;
                     }
                 }
             }
-            else if(mkdir($dir_path)) {
-                // success create dir
+            else if(! mkdir($dir_path)) {
+                $success = false;
             }
-            else {
-                // error create dir
+
+            if(isset($options['print']) && $options['print']) {
+                $this->check("$type directory ($dirname)", $success);
             }
         }
         catch (Exception $e) {
@@ -317,6 +349,21 @@ class PhpClassGenerator {
     }
 }
 
+/**
+ * Generate a random string
+ * @param int $length
+ * @return string
+ */
+function randomString($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
+
 $console = new Console();
 $console->setArgs($argv, '=');
 
@@ -344,6 +391,105 @@ if($console->getArg('init') != null) {
     $console->dir(_CONTROLLERS);
     $console->dir(_ENTITIES);
     $console->dir(_SERVICES);
+    $console->dir(_MIDDLEWARES);
+    $console->dir(_ROUTES);
+    $console->dir(_Util);
+    $console->dir(_VIEWS);
+
+    $defaultDv = [
+        'user'     => 'root',
+        'password' => null,
+        'dbname'   => 'jet_db',
+        'host'   => '127.0.0.1',
+    ];
+
+    $env = [
+        'env' => 'development',
+        'paths' => [],
+        'security' => [
+            'secret' => randomString(12),
+            'request_sanitizer' => true, // sanitize request body and query
+        ],
+        'db' => [
+            'development' => $defaultDv,
+            'testing' => $defaultDv,
+            'production' => $defaultDv
+        ]
+    ];
+    $env_string = var_export($env);
+    $env_code = <<<CODE
+<?php
+    
+return {$env_string};
+
+CODE;
+
+    $index_code = <<<'CODE'
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Jet\Db\Connection;
+
+$env = require_once __DIR__ . '/env.php';
+$_ENV['env'] = $env['env'];
+
+$db = new Connection();
+if(! ($db->connect(
+    $env['db'][$env['env']]['dbname'],
+    $env['db'][$env['env']]['user'],
+    $env['db'][$env['env']]['password'],
+    $env['db'][$env['env']]['host']
+))) {
+    $message = $db->getLastException()->getMessage();
+    echo "Database connection error: $message";
+    exit();
+}
+
+$db->query('set names utf8');
+unset($error);
+
+require __DIR__ . '/src/app.php';
+
+CODE;
+
+    $app_code = <<<'CODE'
+<?php
+
+$homeRoutes = require __DIR__ . '/routes/home.php';
+
+$app = new Jet\App();
+$app->addRoutes($homeRoutes);
+$app->ready();
+
+CODE;
+
+    $htaccess = <<<'CONFIG'
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+CONFIG;
+    
+    file_put_contents(_HOME . '/env.php', $env_code);
+    file_put_contents(_HOME . '/index.php', $index_code);
+    file_put_contents(_SRC . '/app.php', $index_code);
+    file_put_contents(_HOME . '/.htaccess', $htaccess);
     return;
 }
 

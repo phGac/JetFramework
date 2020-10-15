@@ -139,6 +139,8 @@ class App
 
     function ready()
     {
+        global $env;
+
         $match = $this->router->match();
         if(is_array($match)) {
             $this->request->params = $match['params'];
@@ -158,6 +160,11 @@ class App
                     //call_user_func([ (new $handler[0]()), $handler[1] ], $this->request, $this->response);
                 }
             }
+            if(isset($env['security']) && is_array($env['security']) && $env['security']['request_sanitizer']) {
+                $this->request->body = $this->request->sanitize( $this->request->body );
+                $this->request->query = $this->request->sanitize( $this->request->query );
+            }
+
             $this->middleware->go($this->request, $this->response);
         }
         else {

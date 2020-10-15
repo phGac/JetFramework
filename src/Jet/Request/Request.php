@@ -3,6 +3,7 @@
 namespace Jet\Request;
 
 use Jet\Request\Client\Ip;
+use voku\helper\AntiXSS;
 
 class Request {
     public $body;
@@ -17,6 +18,7 @@ class Request {
     public $method;
 
     private $session;
+    private $antiXss;
 
     public function __construct()
     {
@@ -30,6 +32,7 @@ class Request {
         $this->path = strtok($_SERVER['REQUEST_URI'], '?');
         $this->protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $this->originalUrl = $this->protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $this->antiXss = new AntiXSS();
     }
 
     private function getBody() {
@@ -82,5 +85,24 @@ class Request {
     {
         if(! $this->session) $this->session = new Session();
         return $this->session;
+    }
+
+    public function getAntiXss()
+    {
+        return $this->antiXss;
+    }
+
+    /**
+     * @param string|string[] $sanitize
+     * @return array|mixed|string
+     */
+    public function sanitize($sanitize)
+    {
+        return $this->antiXss->xss_clean($sanitize);
+    }
+
+    function isXssFound()
+    {
+        return $this->antiXss->isXssFound();
     }
 }

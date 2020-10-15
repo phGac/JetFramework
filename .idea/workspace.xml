@@ -3,8 +3,35 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="d735ae9c-b5bb-4563-9e64-19d18ff2fe14" name="Default Changelist" comment="" />
+    <list default="true" id="d735ae9c-b5bb-4563-9e64-19d18ff2fe14" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/YetFramework.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/YetFramework.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/jet" beforeDir="false" afterPath="$PROJECT_DIR$/bin/jet" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Jet/App.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Jet/App.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Jet/Request/Request.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Jet/Request/Request.php" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,6 +48,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="PhpDebugGeneral" listening_started="true" />
   <component name="PhpServers">
     <servers>
@@ -32,6 +62,14 @@
     <include_path>
       <path value="$PROJECT_DIR$/vendor/altorouter/altorouter" />
       <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/voku/portable-utf8" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/vendor/voku/portable-ascii" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/vendor/voku/anti-xss" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-iconv" />
     </include_path>
   </component>
   <component name="ProjectId" id="1ihLclIJsftWqtDuXn87U9hATzX" />
@@ -45,7 +83,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="php.override.implement.member.chooser.php.doc" value="NONE" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.CommitDialog" />
+    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -74,12 +112,26 @@
       <workItem from="1602447896654" duration="3701000" />
       <workItem from="1602465788505" duration="1756000" />
       <workItem from="1602522022166" duration="16398000" />
-      <workItem from="1602558683360" duration="11852000" />
+      <workItem from="1602558683360" duration="12845000" />
+      <workItem from="1602622334530" duration="598000" />
+      <workItem from="1602632730201" duration="1349000" />
+      <workItem from="1602724199511" duration="9787000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="WindowStateProjectService">
     <state x="260" y="19" key="#Servers" timestamp="1602366506409">
@@ -90,10 +142,10 @@
       <screen x="0" y="0" width="1360" height="728" />
     </state>
     <state x="134" y="14" width="1092" height="714" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1360.728@0.0.1360.728" timestamp="1602366480314" />
-    <state x="458" y="166" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1602360980184">
+    <state x="458" y="166" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1602727915853">
       <screen x="0" y="0" width="1360" height="728" />
     </state>
-    <state x="458" y="166" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1360.728@0.0.1360.728" timestamp="1602360980184" />
+    <state x="458" y="166" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1360.728@0.0.1360.728" timestamp="1602727915853" />
     <state x="139" y="92" key="#com.intellij.ide.util.MemberChooser" timestamp="1602434523401">
       <screen x="0" y="0" width="1360" height="728" />
     </state>
@@ -166,28 +218,17 @@
       <screen x="0" y="0" width="1360" height="728" />
     </state>
     <state x="383" y="98" key="NewPhpClassDialog/0.0.1360.728@0.0.1360.728" timestamp="1602448245307" />
-    <state x="181" y="9" key="SettingsEditor" timestamp="1602568859609">
+    <state x="181" y="9" key="SettingsEditor" timestamp="1602730498359">
       <screen x="0" y="0" width="1360" height="728" />
     </state>
-    <state x="181" y="9" key="SettingsEditor/0.0.1360.728@0.0.1360.728" timestamp="1602568859609" />
-    <state x="336" y="162" key="run.anything.popup" timestamp="1602568671980">
+    <state x="181" y="9" key="SettingsEditor/0.0.1360.728@0.0.1360.728" timestamp="1602730498359" />
+    <state x="336" y="162" key="run.anything.popup" timestamp="1602726211939">
       <screen x="0" y="0" width="1360" height="728" />
     </state>
-    <state x="336" y="162" key="run.anything.popup/0.0.1360.728@0.0.1360.728" timestamp="1602568671980" />
+    <state x="336" y="162" key="run.anything.popup/0.0.1360.728@0.0.1360.728" timestamp="1602726211939" />
     <state x="343" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1602356096630">
       <screen x="0" y="0" width="1360" height="728" />
     </state>
     <state x="343" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1360.728@0.0.1360.728" timestamp="1602356096630" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/src/Jet/App.php</url>
-          <line>160</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
