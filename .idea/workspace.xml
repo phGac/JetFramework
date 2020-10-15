@@ -23,14 +23,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d735ae9c-b5bb-4563-9e64-19d18ff2fe14" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/YetFramework.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/YetFramework.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/jet" beforeDir="false" afterPath="$PROJECT_DIR$/bin/jet" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Jet/App.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Jet/App.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Jet/Request/Request.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Jet/Request/Request.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,6 +110,7 @@
       <workItem from="1602622334530" duration="598000" />
       <workItem from="1602632730201" duration="1349000" />
       <workItem from="1602724199511" duration="9787000" />
+      <workItem from="1602773666132" duration="1772000" />
     </task>
     <servers />
   </component>
@@ -132,6 +127,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="260" y="19" key="#Servers" timestamp="1602366506409">

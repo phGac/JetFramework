@@ -416,7 +416,7 @@ if($console->getArg('init') != null) {
             'production' => $defaultDv
         ]
     ];
-    $env_string = var_export($env);
+    $env_string = var_export($env, true);
     $env_code = <<<CODE
 <?php
     
@@ -425,6 +425,7 @@ return {$env_string};
 CODE;
 
     $index_code = <<<'CODE'
+<?php
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Jet\Db\Connection;
@@ -488,7 +489,7 @@ CONFIG;
     
     file_put_contents(_HOME . '/env.php', $env_code);
     file_put_contents(_HOME . '/index.php', $index_code);
-    file_put_contents(_SRC . '/app.php', $index_code);
+    file_put_contents(_SRC . '/app.php', $app_code);
     file_put_contents(_HOME . '/.htaccess', $htaccess);
     return;
 }
