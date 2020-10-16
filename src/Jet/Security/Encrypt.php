@@ -4,7 +4,13 @@ namespace Jet\Security;
 
 class Encrypt
 {
-    static function encrypt(string $original, string $secret, $method = 'aes-256-cbc')
+    /**
+     * @param string $original
+     * @param string $secret
+     * @param string $method
+     * @return string
+     */
+    static function encrypt($original, $secret, $method = 'aes-256-cbc')
     {
         $iv         = substr(sha1(mt_rand()), 0, 16);
         $password   = sha1($secret);
@@ -14,7 +20,13 @@ class Encrypt
         return "$iv:$salt:$encrypted";
     }
 
-    static function decrypt(string $encrypted, string $secret, $method = 'aes-256-cbc')
+    /**
+     * @param string $encrypted
+     * @param string $secret
+     * @param string $method
+     * @return false|string
+     */
+    static function decrypt($encrypted, $secret, $method = 'aes-256-cbc')
     {
         $password = sha1($secret);
         $components = explode( ':', $encrypted );
@@ -33,12 +45,21 @@ class Encrypt
         return $decrypted_msg;
     }
 
-    static function hashMake(string $original)
+    /**
+     * @param string $original
+     * @return false|string|null
+     */
+    static function hashMake($original)
     {
         return password_hash($original, PASSWORD_DEFAULT);
     }
 
-    static function hashVerify(string $original, string $hash)
+    /**
+     * @param string $original
+     * @param string $hash
+     * @return bool
+     */
+    static function hashVerify($original, $hash)
     {
         return password_verify($original, $hash);
     }

@@ -4,7 +4,7 @@ namespace Jet\Exception;
 
 use Exception;
 
-class BaseError extends Exception {
+abstract class BaseError extends Exception {
     private $type;
     private $level;
 

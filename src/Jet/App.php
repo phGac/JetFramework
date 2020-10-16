@@ -19,7 +19,7 @@ class App
      */
     private $response;
     /**
-     * @var null
+     * @var AltoRouter
      */
     private $router;
     /**
