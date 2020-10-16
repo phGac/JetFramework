@@ -41,6 +41,15 @@ class App
     }
 
     /**
+     * @param string $folder
+     * @throws Exception
+     */
+    function setViewsFolder($folder)
+    {
+        $this->response->setViews($folder);
+    }
+
+    /**
      * @param callable $func
      * @throws Exception
      */

@@ -1,13 +1,13 @@
 <?php
 
-namespace Controller;
+namespace Controllers;
 
 class Home implements \Jet\Controller\Controller
 {
 
     function index(\Jet\Request\Request $req, \Jet\Request\Response $res)
     {
-        // TODO: Implement index() method.
+        // TODO: Implement index.phtml() method.
         $res->send('Home')
             ->end();
     }

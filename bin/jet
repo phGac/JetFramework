@@ -455,7 +455,7 @@ CODE;
     $app_code = <<<'CODE'
 <?php
 
-$homeRoutes = require __DIR__ . '/routes/home.php';
+$homeRoutes = require __DIR__ . '/routes/index.php';
 
 $app = new Jet\App();
 $app->addRoutes($homeRoutes);
@@ -483,12 +483,12 @@ CODE;
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    RewriteRule ^ index.phtml [L]
 </IfModule>
 CONFIG;
     
     file_put_contents(_HOME . '/env.php', $env_code);
-    file_put_contents(_HOME . '/index.php', $index_code);
+    file_put_contents(_HOME . '/index.phtml', $index_code);
     file_put_contents(_SRC . '/app.php', $app_code);
     file_put_contents(_HOME . '/.htaccess', $htaccess);
     return;
@@ -502,7 +502,7 @@ if(($argValue = $console->getArg('controller', '-c')) != null) {
             ->addUse('Jet\Controller\Controller')
             ->addUse('Jet\Request\Request')
             ->addUse('Jet\Request\Response')
-            ->addFunction('index', null, 'Request $req', 'Response $res')
+            ->addFunction('index.phtml', null, 'Request $req', 'Response $res')
             ->addFunction('create', null, 'Request $req', 'Response $res')
             ->addFunction('show', null, 'Request $req', 'Response $res')
             ->addFunction('edit', null, 'Request $req', 'Response $res')

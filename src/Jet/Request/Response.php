@@ -6,6 +6,7 @@ namespace Jet\Request;
 
 use AltoRouter;
 use Exception;
+use Jet\View\View;
 
 class Response {
     /**
@@ -33,10 +34,13 @@ class Response {
      */
     private $filepath;
     /**
-     * @var Blade Maneja el renderizado de vistas
+     * @var AltoRouter
      */
-    private $blade;
     private $router;
+    /**
+     * @var string|null
+     */
+    private $views_folder;
 
     /**
      * Response constructor.
@@ -53,19 +57,20 @@ class Response {
         $this->headers = [];
         $this->status = 0;
         $this->filepath = null;
-        $this->blade = null;
+        $this->views_folder = null;
     }
 
     /**
-     * @param string $views
-     * @param string $cache
+     * @param string $views_folder
+     * @param string|null $cache
+     * @throws Exception
      */
-    public function setViews($views, $cache)
+    public function setViews($views_folder, $cache = null)
     {
-        if(! is_dir($views) || ! is_dir($cache)) {
+        if(! is_dir($views_folder)) {
             throw new Exception('El directorio no existe');
         }
-        $this->blade = new Blade($views, $cache);
+        $this->views_folder = $views_folder;
     }
 
     /**
@@ -119,6 +124,7 @@ class Response {
      * @param string $filepath
      * @param string|null $name
      * @return $this
+     * @throws Exception
      */
     public function sendFile($filepath, $name = null)
     {
@@ -142,31 +148,53 @@ class Response {
         return $this;
     }
 
-    public function render(string $path, array $params = [], callable $callback = null) {
-        if($this->blade == null)
-            throw new Exception('Debe indicar el directorio de vistas con setViews()');
-        $text = $this->blade->render($path, $params);
+    /**
+     * @param string $path
+     * @param array $params
+     * @param string|null $layout
+     * @param callable|null $callback
+     * @throws Exception
+     */
+    public function render($path, array $params = [], $layout = null, callable $callback = null) {
+        $view = new View($this->views_folder);
+        $view->setLayout($layout);
+        $output = $view->render($path, $params);
         if($callback != null) {
-            $callback($text, $this);
+            $callback($output, $this);
         }
         else {
-            $this->text .= $text;
+            $this->text .= $output;
             $this->end();
         }
     }
 
-    public function header(string $name, string $value) {
+    /**
+     * @param string $name
+     * @param string $value
+     * @return $this
+     */
+    public function header($name, $value) {
         $this->headers[] = "$name: $value";
         return $this;
     }
 
-    public function cookie(string $name, $value, $expires = null) {
+    /**
+     * @param string $name
+     * @param $value
+     * @param null $expires
+     * @throws Exception
+     */
+    public function cookie($name, $value, $expires = null) {
         /// setcookie($name, $value);
         /// return $this;
         throw new Exception('Not Working');
     }
 
-    public function clear(string $only = null)
+    /**
+     * @param string|null $only
+     * @return $this
+     */
+    public function clear($only = null)
     {
         switch ($only) {
             case null:
@@ -201,6 +229,6 @@ class Response {
             header($value);
         }
 
-        die();
+        exit(0);
     }
 }

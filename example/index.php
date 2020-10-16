@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
-include __DIR__ . '/Home.php';
+include __DIR__ . '/Controllers/Home.php';
 
 use Jet\Request\Request;
 use Jet\Request\Response;
@@ -12,6 +12,7 @@ function callme(Request $req, Response $res)
 }
 
 $app = new Jet\App();
+$app->setViewsFolder(__DIR__ . '/views');
 
 $app->use(
     '/',
@@ -43,10 +44,14 @@ $app->get('/redirect', function(Request $req, Response $res) {
     $res->redirect('[hello]'); // => path: /hi
 });
 
-$app->get('/home', '\Controller\Home@index', 'home');
+$app->get('/home', '\Controllers\Home@index.phtml', 'home');
 
 $app->get('/exception', function(Request $req, Response $res) {
     throw new Exception('Something');
+});
+
+$app->get('/view', function(Request $req, Response $res) {
+    $res->render('index.php', [ 'title' => 'My Title' ], 'layout.php');
 });
 
 $app->ready();
