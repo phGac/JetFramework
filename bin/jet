@@ -111,7 +111,7 @@ class Console {
     function getArg(...$names)
     {
         $args = (array_filter(array_keys($this->args), function($key) use ($names) { return in_array($key, $names); }));
-        return (count($args) > 0) ? $this->args[ $args[0] ] : null;
+        return (count($args) > 0) ? $this->args[ array_shift($args) ] : null;
     }
 
     /**
@@ -257,6 +257,7 @@ class PhpClassGenerator {
         $this->implementations = [];
         $this->extension = [];
         $this->functions = [];
+        $this->uses = [];
     }
 
     /**
@@ -413,40 +414,39 @@ if($console->getArg('init') != null) {
     $console->dir(_VALIDATORS);
     $console->dir(_VIEWS);
 
-    $defaultDv = [
-        'user'     => 'root',
-        'password' => null,
-        'dbname'   => 'jet_db',
-        'host'   => '127.0.0.1',
-    ];
-    $env = [
-        'env' => 'development',
-
-        'autoload' => [
-            '__DIR__ . /src/middlewares',
-            '__DIR__ . /src/App/Entities',
-            '__DIR__ . /src/App/Controllers',
-        ],
-
-        'security' => [
-            'secret' => randomString(15),
-            'request_sanitizer' => false, // sanitize request body and query
-        ],
-
-        'db' => [
-            'development' => $defaultDv,
-            'testing' => $defaultDv,
-            'production' => $defaultDv
-        ]
-    ];
-    $env_string = var_export($env, true);
-    $env_string = str_replace('\'__DIR__ . ', '__DIR__ . \'', $env_string);
     $env_code = <<<CODE
 <?php
     
-return {$env_string};
+return [
+    'mode' => 'development',
+    
+    'autoload' => [
+        __DIR__ . /src/middlewares',
+        __DIR__ . /src/App/Entities',
+        __DIR__ . /src/App/Controllers',
+    ],
+    
+    'security' => [
+        'secret' => '::secret::',
+        'request_sanitizer' => false, // auto sanitize request body and query
+    ],
+    
+    'db' => [
+        'development' => [
+            'user'     => 'root',
+            'password' => null,
+            'dbname'   => 'jet_db',
+            'host'   => '127.0.0.1',
+        ],
+        'testing' => [
+        ],
+        'production' => [
+        ]
+    ]
+];
 
 CODE;
+    $env_code = str_replace('::secret::', randomString(15), $env_code);
 
     $index_code = <<<'CODE'
 <?php
