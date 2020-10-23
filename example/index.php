@@ -1,57 +1,65 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
-include __DIR__ . '/Controllers/Home.php';
+$env = require_once __DIR__ .'/env.php';
 
-use Jet\Request\Request;
-use Jet\Request\Response;
-
-function callme(Request $req, Response $res)
+$db = new Jet\Db\Connection($env['db'][ $env['mode'] ]['driver']);
+if(! $db->connect(
+    $env['db'][ $env['mode'] ]['dbname'],
+    $env['db'][ $env['mode'] ]['user'],
+    $env['db'][ $env['mode'] ]['password'],
+    $env['db'][ $env['mode'] ]['host'],
+    $env['db'][ $env['mode'] ]['port']
+))
 {
-    $res->send('function:callme,');
+    $error = $db->getLastException();
+    echo 'Connection error: ' . $error->getMessage();
 }
 
 $app = new Jet\App();
-$app->setViewsFolder(__DIR__ . '/views');
+$app->configure($env);
+unset($env);
 
 $app->use(
     '/',
-    function(Request $req, Response $res, callable $next) {
+    function(Jet\Request\Request $req, Jet\Request\Response $res, callable $next) {
         $res->send('uno');
         $next();
     },
-    function(Request $req, Response $res, callable $next) {
+    function(Jet\Request\Request $req, Jet\Request\Response $res, callable $next) {
         $res->send('dos');
         $next();
     }
 );
 
-$app->get('/', function(Request $req, Response $res, callable $next) {
+$app->get('/', function(Jet\Request\Request $req, Jet\Request\Response $res, callable $next) {
     $res->send('Hola')
         ->end();
 });
 
-$app->get('/hi', array( 'callme', function(Request $req, Response $res) {
+$app->get('/hi', array( 'isNotLoggedIn', function(Jet\Request\Request $req, Jet\Request\Response $res) {
     $res->send('function:anonymous')
         ->end();
 }), 'hello');
 
-$app->get('/google', function(Request $req, Response $res) {
+$app->get('/google', function(Jet\Request\Request $req, Jet\Request\Response $res) {
     $res->redirect('https://www.google.com');
 });
 
-$app->get('/redirect', function(Request $req, Response $res) {
+$app->get('/redirect', function(Jet\Request\Request $req, Jet\Request\Response $res) {
     $res->redirect('[hello]'); // => path: /hi
 });
 
-$app->get('/home', '\Controllers\Home@index.phtml', 'home');
+$app->get('/home', '\Controllers\Home@index', 'home');
 
-$app->get('/exception', function(Request $req, Response $res) {
+$app->get('/exception', function(Jet\Request\Request $req, Jet\Request\Response $res) {
     throw new Exception('Something');
 });
 
-$app->get('/view', function(Request $req, Response $res) {
-    $res->render('index.php', [ 'title' => 'My Title' ], 'layout.php');
+$app->get('/private', array('isLoggedIn', '\Controllers\Home@index'), 'private');
+
+$app->get('/view', function(Jet\Request\Request $req, Jet\Request\Response $res) {
+    $res->render('index.php', [ 'title' => 'My Title' ]);
 });
 
 $app->ready();

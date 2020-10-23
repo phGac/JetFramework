@@ -41,6 +41,14 @@ class Response {
      * @var string|null
      */
     private $views_folder;
+    /**
+     * @var string|null
+     */
+    private $cache_folder;
+    /**
+     * @var string|null
+     */
+    private $cache_time;
 
     /**
      * Response constructor.
@@ -58,19 +66,23 @@ class Response {
         $this->status = 0;
         $this->filepath = null;
         $this->views_folder = null;
+        $this->cache_time = null;
     }
 
     /**
      * @param string $views_folder
-     * @param string|null $cache
+     * @param string $cache_folder
+     * @param string|null $cache_time
      * @throws Exception
      */
-    public function setViews($views_folder, $cache = null)
+    public function setViews($views_folder, $cache_folder, $cache_time)
     {
-        if(! is_dir($views_folder)) {
+        if(! is_dir($views_folder) || ! is_dir($cache_folder)) {
             throw new Exception('El directorio no existe');
         }
         $this->views_folder = $views_folder;
+        $this->cache_folder = $cache_folder;
+        $this->cache_time = $cache_time;
     }
 
     /**
@@ -95,10 +107,8 @@ class Response {
      */
     public function redirect($to, $params = [])
     {
-        if(preg_match('/^\[.+\]$/', $to)) {
-            $name = preg_replace('/[\[|\]]/', '', $to);
-            $to = $this->router->generate($name, $params);
-        }
+        if(preg_match('/^\[(.+)]$/', $to, $matches))
+            $to = $this->router->generate($matches[1], $params);
         $this->headers[] = "Location: $to";
         $this->end();
     }
@@ -149,16 +159,16 @@ class Response {
     }
 
     /**
-     * @param string $path
+     * @param string $template
      * @param array $params
-     * @param string|null $layout
      * @param callable|null $callback
      * @throws Exception
      */
-    public function render($path, array $params = [], $layout = null, callable $callback = null) {
-        $view = new View($this->views_folder);
-        $view->setLayout($layout);
-        $output = $view->render($path, $params);
+    public function render($template, array $params, callable $callback = null)
+    {
+        $view = new View($template, $this->views_folder, $this->cache_folder);
+        if($this->cache_time != null && ! $view->isCached()) $view->save($this->cache_time);
+        $output = $view->render($params);
         if($callback != null) {
             $callback($output, $this);
         }

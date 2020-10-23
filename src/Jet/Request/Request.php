@@ -17,6 +17,7 @@ class Request {
     public $originalUrl;
     public $method;
 
+    private $secret;
     private $session;
     private $antiXss;
 
@@ -33,6 +34,7 @@ class Request {
         $this->protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
         $this->originalUrl = $this->protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
         $this->antiXss = new AntiXSS();
+        $this->secret = null;
     }
 
     private function getBody() {
@@ -81,9 +83,17 @@ class Request {
         $this->path = $path;
     }
 
+    /**
+     * @param string $secret
+     */
+    function setSecret($secret)
+    {
+        $this->secret = $secret;
+    }
+
     public function getSession()
     {
-        if(! $this->session) $this->session = new Session();
+        if(! $this->session) $this->session = new Session(true, $this->secret);
         return $this->session;
     }
 

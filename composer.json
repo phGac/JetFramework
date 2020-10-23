@@ -9,7 +9,8 @@
         "ext-json": "*",
         "ext-openssl": "*",
         "ext-pdo": "*",
-        "voku/anti-xss": "^4.1"
+        "voku/anti-xss": "^4.1",
+        "ext-dom": "*"
     },
     "license": "MIT",
     "authors": [

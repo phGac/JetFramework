@@ -3,6 +3,7 @@
 const _HOME = __DIR__ . '/../../../..';
 const _SRC = _HOME . '/src';
 const _TMP = _HOME . '/tmp';
+const _CACHE_VIEWS = _TMP . '/views';
 const _TESTS = _HOME . '/tests';
 const _PUBLIC = _HOME . '/public';
 const _APP = _SRC . '/App';
@@ -12,6 +13,7 @@ const _SERVICES = _APP . '/Services';
 const _MIDDLEWARES = _SRC . '/middlewares';
 const _ROUTES = _SRC . '/routes';
 const _Util = _SRC . '/Util';
+const _VALIDATORS = _Util . '/Validators';
 const _VIEWS = _SRC . '/views';
 
 /**
@@ -24,7 +26,7 @@ function rrmDir($dir) {
         foreach ($objects as $object) {
             if ($object != "." && $object != "..") {
                 if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && !is_link($dir."/".$object))
-                    rrmdir($dir. DIRECTORY_SEPARATOR .$object);
+                    rrmDir($dir. DIRECTORY_SEPARATOR .$object);
                 else
                     unlink($dir. DIRECTORY_SEPARATOR .$object);
             }
@@ -34,29 +36,34 @@ function rrmDir($dir) {
 }
 
 class ConsoleOption {
-    const FOREGROUNDS = [
-        'bold'         => '1',    'dim'          => '2',
-        'black'        => '0;30', 'dark_gray'    => '1;30',
-        'blue'         => '0;34', 'light_blue'   => '1;34',
-        'green'        => '0;32', 'light_green'  => '1;32',
-        'cyan'         => '0;36', 'light_cyan'   => '1;36',
-        'red'          => '0;31', 'light_red'    => '1;31',
-        'purple'       => '0;35', 'light_purple' => '1;35',
-        'brown'        => '0;33', 'yellow'       => '1;33',
-        'light_gray'   => '0;37', 'white'        => '1;37',
-        'normal'       => '0;39',
-    ];
-    const BACKGROUNDS = [
-        'black'        => '40',   'red'          => '41',
-        'green'        => '42',   'yellow'       => '43',
-        'blue'         => '44',   'magenta'      => '45',
-        'cyan'         => '46',   'light_gray'   => '47',
-    ];
-    const OPTIONS = [
-        'underline'    => '4',    'blink'         => '5',
-        'reverse'      => '7',    'hidden'        => '8',
-    ];
     const EOF = "\n";
+
+    const OPTIONS = [
+        'foreground' => [
+            'bold'         => '1',    'dim'          => '2',
+            'black'        => '0;30', 'dark_gray'    => '1;30',
+            'blue'         => '0;34', 'light_blue'   => '1;34',
+            'green'        => '0;32', 'light_green'  => '1;32',
+            'cyan'         => '0;36', 'light_cyan'   => '1;36',
+            'red'          => '0;31', 'light_red'    => '1;31',
+            'purple'       => '0;35', 'light_purple' => '1;35',
+            'brown'        => '0;33', 'yellow'       => '1;33',
+            'light_gray'   => '0;37', 'white'        => '1;37',
+            'normal'       => '0;39',
+        ],
+
+        'background' => [
+            'black'        => '40',   'red'          => '41',
+            'green'        => '42',   'yellow'       => '43',
+            'blue'         => '44',   'magenta'      => '45',
+            'cyan'         => '46',   'light_gray'   => '47',
+        ],
+
+        'option' => [
+            'underline'    => '4',    'blink'         => '5',
+            'reverse'      => '7',    'hidden'        => '8',
+        ]
+    ];
 }
 
 class Console {
@@ -89,6 +96,15 @@ class Console {
     }
 
     /**
+     * @param string $name
+     * @param string $value
+     */
+    function setArg($name, $value)
+    {
+        $this->args[$name] = $value;
+    }
+
+    /**
      * @param string ...$names
      * @return string|null
      */
@@ -112,18 +128,17 @@ class Console {
             if($text != null) {
                 $finalText = '';
                 if(count($options) !== 0) {
-                    if(isset($options['foreground'])) {
-                        $color = ConsoleOption::FOREGROUNDS[ $options['foreground'] ];
-                        $finalText .= "\033[{$color}m";
+                    foreach ($options as $index => $value) {
+                        switch($index) {
+                            case 'foreground':
+                            case 'background':
+                            case 'option':
+                                $option = ConsoleOption::OPTIONS[ $index ][ $value ];
+                                $finalText .= "\033[{$option}m";
+                                break;
+                        }
                     }
-                    if(isset($options['background'])) {
-                        $color = ConsoleOption::BACKGROUNDS[ $options['background'] ];
-                        $finalText .= "\033[{$color}m";
-                    }
-                    if(isset($options['option'])) {
-                        $color = ConsoleOption::OPTIONS[ $options['option'] ];
-                        $finalText .= "\033[{$color}m";
-                    }
+
                     $finalText .= "$text\033[0m";
                 }
                 else {
@@ -385,6 +400,7 @@ if(($argValue = $console->getArg('help', '-h')) != null) {
 if($console->getArg('init') != null) {
     $console->dir(_SRC);
     $console->dir(_TMP);
+    $console->dir(_CACHE_VIEWS);
     $console->dir(_TESTS);
     $console->dir(_PUBLIC);
     $console->dir(_APP);
@@ -394,6 +410,7 @@ if($console->getArg('init') != null) {
     $console->dir(_MIDDLEWARES);
     $console->dir(_ROUTES);
     $console->dir(_Util);
+    $console->dir(_VALIDATORS);
     $console->dir(_VIEWS);
 
     $defaultDv = [
@@ -402,19 +419,20 @@ if($console->getArg('init') != null) {
         'dbname'   => 'jet_db',
         'host'   => '127.0.0.1',
     ];
-
     $env = [
         'env' => 'development',
-        'paths' => [
-            'App\\Controllers' => '__DIR__ . /src/App/Controllers',
-            'App\\Entities' => '__DIR__ . /src/App/Entities',
-            'App\\Services' => '__DIR__ . /src/App/Services',
-            'Util' => '__DIR__ . /src/Util'
+
+        'autoload' => [
+            '__DIR__ . /src/middlewares',
+            '__DIR__ . /src/App/Entities',
+            '__DIR__ . /src/App/Controllers',
         ],
+
         'security' => [
             'secret' => randomString(15),
-            'request_sanitizer' => true, // sanitize request body and query
+            'request_sanitizer' => false, // sanitize request body and query
         ],
+
         'db' => [
             'development' => $defaultDv,
             'testing' => $defaultDv,
@@ -432,43 +450,49 @@ CODE;
 
     $index_code = <<<'CODE'
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
 
-use Jet\Db\Connection;
-
-$env = require_once __DIR__ . '/env.php';
-$_ENV['env'] = $env['env'];
-
-$db = new Connection();
-if(! ($db->connect(
-    $env['db'][$env['env']]['dbname'],
-    $env['db'][$env['env']]['user'],
-    $env['db'][$env['env']]['password'],
-    $env['db'][$env['env']]['host']
-))) {
-    $message = $db->getLastException()->getMessage();
-    echo "Database connection error: $message";
-    exit();
-}
-
-$db->query('set names utf8');
-unset($error);
-
-require __DIR__ . '/src/app.php';
+require_once __DIR__ . '/../bootstrap.php';
 
 CODE;
+    $bootstrap_code = <<<'CODE'
+<?php
 
+require_once __DIR__ . '/vendor/autoload.php';
+
+$env = require_once __DIR__ .'/env.php';
+
+$db = new Jet\Db\Connection($env['db'][ $env['mode'] ]['driver']);
+if(! $db->connect(
+    $env['db'][ $env['mode'] ]['dbname'],
+    $env['db'][ $env['mode'] ]['user'],
+    $env['db'][ $env['mode'] ]['password'],
+    $env['db'][ $env['mode'] ]['host'],
+    $env['db'][ $env['mode'] ]['port']
+))
+{
+    $error = $db->getLastException();
+    echo 'Connection error: ' . $error->getMessage();
+    exit(1);
+}
+
+require_once __DIR__ . '/src/app.php';
+
+CODE;
     $app_code = <<<'CODE'
 <?php
+
+global $env;
 
 $homeRoutes = require __DIR__ . '/routes/home.php';
 
 $app = new Jet\App();
+$app->configure($env);
+
 $app->addRoutes($homeRoutes);
+
 $app->ready();
 
 CODE;
-
     $htaccess = <<<'CONFIG'
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
@@ -489,20 +513,46 @@ CODE;
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.phtml [L]
+    RewriteRule ^ index.php [L]
 </IfModule>
 CONFIG;
-    
+    $home_routes = <<<'CODE'
+<?php
+
+$router = new AltoRouter();
+
+$router->map('GET', '/', [ '\App\Controllers\Home@index' ], 'home');
+
+return $router;
+CODE;
+    $jet_code = <<<'CODE'
+<?php
+
+require __DIR__ . '/vendor/harstat/jet-framework/bin/jet';
+CODE;
+
     file_put_contents(_HOME . '/env.php', $env_code);
-    file_put_contents(_HOME . '/index.php', $index_code);
+    file_put_contents(_HOME . '/bootstrap.php', $bootstrap_code);
+    file_put_contents(_HOME . '/jet', $jet_code);
+    file_put_contents(_PUBLIC . '/index.php', $index_code);
     file_put_contents(_SRC . '/app.php', $app_code);
-    file_put_contents(_HOME . '/.htaccess', $htaccess);
-    return;
+    file_put_contents(_PUBLIC . '/.htaccess', $htaccess);
+    file_put_contents(_ROUTES . '/home.php', $home_routes);
+
+    $console->setArg('controller', 'Home');
+    $console->setArg('entity', 'User');
+
+    $console->arrayOut([
+        [],
+        [ '* Para capturar y hacer seguimiento de errores te recomendamos utilizar filp/whoops (https://filp.github.io/whoops/)', [ 'foreground' => 'light_gray' ] ],
+        [],
+        [ 'Listo!', [ 'foreground' => 'bold' ] ],
+    ]);
 }
 
 if(($argValue = $console->getArg('controller', '-c')) != null) {
     $class = new PhpClassGenerator();
-    $class->setName($argValue)
+    $class->setName($argValue . 'Controller')
             ->setNamespace('App\Controller')
             ->addImplementation('Controller')
             ->addUse('Jet\Controller\Controller')
@@ -516,8 +566,7 @@ if(($argValue = $console->getArg('controller', '-c')) != null) {
             ->addFunction('destroy', null, 'Request $req', 'Response $res');
 
     $text = $class->__toString();
-    file_put_contents(_CONTROLLERS . '/' . $argValue . 'Controller.php', $text);
-    return;
+    file_put_contents(_CONTROLLERS . "/{$argValue}Controller.php", $text);
 }
 
 if(($argValue = $console->getArg('entity', '-e')) != null) {
@@ -537,6 +586,17 @@ if(($argValue = $console->getArg('entity', '-e')) != null) {
         ]);
 
     $text = $class->__toString();
-    file_put_contents(_ENTITIES . '/' . $argValue . 'Entity.php', $text);
-    return;
+    file_put_contents(_ENTITIES . "/{$argValue}Entity.php", $text);
+
+    $console->setArg('validator', $argValue);
+}
+
+if(($argValue = $console->getArg('validator', '-v')) != null) {
+    $class = new PhpClassGenerator();
+    $class->setName($argValue . 'Validator')
+        ->setNamespace('Util\Validators')
+        ->addFunction('validate', null, 'array $data');
+
+    $text = $class->__toString();
+    file_put_contents(_VALIDATORS . "/{$argValue}Validator.php", $text);
 }

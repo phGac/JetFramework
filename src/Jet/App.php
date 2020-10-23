@@ -30,6 +30,10 @@ class App
      * @var callable
      */
     private $error404;
+    /**
+     * @var bool
+     */
+    private $request_sanitize;
 
     function __construct()
     {
@@ -38,15 +42,62 @@ class App
         $this->response = new Request\Response($this->router);
         $this->middleware = new Middleware\Route();
         $this->error404 = null;
+        $this->request_sanitize = true;
     }
 
     /**
-     * @param string $folder
+     * @param string $views_folder
+     * @param string $cache_folder
+     * @param string|null $cache_time
      * @throws Exception
      */
-    function setViewsFolder($folder)
+    function setViews($views_folder, $cache_folder, $cache_time = null)
     {
-        $this->response->setViews($folder);
+        $this->response->setViews($views_folder, $cache_folder, $cache_time);
+    }
+
+    /**
+     * @param array $paths
+     * @throws Exception
+     */
+    function autoload(array $paths)
+    {
+        foreach ($paths as $path) {
+            if(is_file($path)) {
+                include $path;
+            }
+            else if(is_dir($path)) {
+                foreach (glob($path . '/*.php') as $file) {
+                    include $file;
+                }
+            }
+            else {
+                throw new Exception('File or Folder not found');
+            }
+        }
+    }
+
+    function configure(array $config)
+    {
+        if(isset($config['autoload']) && is_array($config['autoload'])) {
+            $this->autoload($config['autoload']);
+        }
+        if(isset($config['views']) && is_array($config['views'])) {
+            if(isset($config['views']['path']) && isset($config['views']['cache']) && isset($config['views']['cache']['path'])) {
+                $views_directory = $config['views']['path'];
+                $cache_directory = $config['views']['cache']['path'];
+                $time = (isset($config['views']['cache']['allow']) && $config['views']['cache']['allow']) ? $config['views']['cache']['time'] : null;
+                $this->setViews($views_directory, $cache_directory, $time);
+            }
+        }
+        if(isset($config['security'])) {
+            if(isset($config['security']['secret'])) {
+                $this->request->setSecret($config['security']['secret']);
+            }
+            if(isset($config['security']['request_sanitize'])) {
+                $this->request_sanitize = $config['security']['request_sanitize'];
+            }
+        }
     }
 
     /**
@@ -61,7 +112,7 @@ class App
 
     /**
      * @param string $path
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
     function use($path, ...$handlers)
     {
@@ -89,7 +140,7 @@ class App
      * @param string $name Optional name of this route. Supply if you want to reverse route this url in your application.
      * @throws Exception
      */
-    function request($method, $route, $target, $name = null)
+    function map($method, $route, $target, $name = null)
     {
         $this->router->map($method, $route, $target, $name);
     }
@@ -169,7 +220,7 @@ class App
                     //call_user_func([ (new $handler[0]()), $handler[1] ], $this->request, $this->response);
                 }
             }
-            if(isset($env['security']) && is_array($env['security']) && $env['security']['request_sanitizer']) {
+            if($this->request_sanitize) {
                 $this->request->body = $this->request->sanitize( $this->request->body );
                 $this->request->query = $this->request->sanitize( $this->request->query );
             }

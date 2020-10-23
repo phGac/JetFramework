@@ -4,6 +4,7 @@
 namespace Jet\View;
 
 
+use DateTime;
 use Exception;
 
 class View
@@ -11,87 +12,107 @@ class View
     /**
      * @var string
      */
-    protected $views_folder;
+    private $template;
     /**
-     * @var string|null
+     * @var bool
      */
-    protected $layout;
+    private $cached;
+
+    /**
+     * @var string
+     */
+    private $output;
+    /**
+     * @var ViewRender
+     */
+    private $renderer;
+
+    /**
+     * @var string
+     */
+    private $views_folder;
+    /**
+     * @var string
+     */
+    private $cache_folder;
+    /**
+     * @var int
+     */
+    private $cache_time;
 
     /**
      * View constructor.
+     * @param $template
      * @param string $views_folder
+     * @param string $cache_folder
      */
-    function __construct($views_folder = '')
+    function __construct($template, $views_folder, $cache_folder)
     {
+        $this->template = $template;
+        $this->cached = null;
+        $this->output = '';
+        $this->renderer = new ViewRender($views_folder, $cache_folder);
         $this->views_folder = $views_folder;
-        $this->layout = null;
+        $this->cache_folder = $cache_folder;
+        $this->cache_time = 0;
+        $this->isCached();
     }
 
     /**
-     * @param string $folder
+     * @return bool
      */
-    function setViewsFolder($folder)
+    function isCached()
     {
-        $this->views_folder = $folder;
-    }
+        if($this->cached === null) {
+            $template_filename = basename($this->template);
+            $template_filename_regex = preg_quote($template_filename);
+            $files = glob($this->cache_folder . DIRECTORY_SEPARATOR . '*');
+            $filename = null;
+            foreach ($files as $file) {
+                $filename = basename($file);
+                if(preg_match("/^({$template_filename_regex})\.([0-9]+)/", $filename, $matches)) {
+                    $this->cache_time = intval($matches[2]);
+                    break;
+                }
+            }
 
-    function getViewsFolder()
-    {
-        return $this->views_folder;
-    }
-
-    /**
-     * @param string|null $layout
-     * @throws Exception
-     */
-    function setLayout($layout)
-    {
-        if($layout === '' || $layout === null) {
-            $this->layout = $layout;
+            $this->cached = (time() < $this->cache_time);
+            return $this->cached;
         }
         else {
-            $path = $this->views_folder . DIRECTORY_SEPARATOR . $layout;
-            if(! is_file($path)) {
-                throw new Exception('Layout File not found');
-            }
-            $this->layout = $layout;
+            return $this->cached;
         }
     }
 
     /**
-     * @param string $template
      * @param array $attributes
      * @return false|string
      * @throws Exception
      */
-    function render($template, array $attributes = [])
+    function render($attributes = [])
     {
-        try {
-            if(isset($attributes['template_content'])) throw new Exception('Attribute `template` can not be set');
-            $base_path = $this->views_folder . DIRECTORY_SEPARATOR;
-            $output = $this->renderTemplate($base_path . $template, $attributes);
-            if(! empty($this->layout)) {
-                $attributes['template_content'] = $output;
-                $output = $this->renderTemplate($base_path . $this->layout, $attributes);
-            }
-            return $output;
-        }
-        catch(Exception $e) {
-            ob_end_clean();
-            throw $e;
-        }
+        $template = $this->template;
+        if($this->cached) $template .= '.' . $this->cache_time;
+        return $this->renderer->render($template, $attributes, $this->cached);
     }
 
     /**
-     * @param string $template
-     * @param array $attributes
-     * @return false|string
+     * @param string $max_time
+     * @throws Exception
      */
-    protected function renderTemplate($template, array $attributes)
+    function save($max_time)
     {
-        extract($attributes);
-        ob_start();
-        include $template;
-        return ob_get_clean();
+        $datetime = new DateTime();
+        $datetime->modify($max_time);
+        $time = strtotime($datetime->format('Y-m-d H:i:s'));
+        $output = $this->renderer->renderAsCacheFile($this->template);
+
+        $last_cache_file = $this->cache_folder . DIRECTORY_SEPARATOR . $this->template . '.' . $this->cache_time;
+        $new_cache_file = $this->cache_folder . DIRECTORY_SEPARATOR . $this->template . '.' . $time;
+
+        if($this->cache_time !== 0)
+            if(! unlink($last_cache_file)) return;
+
+        file_put_contents($new_cache_file, $output);
     }
 }

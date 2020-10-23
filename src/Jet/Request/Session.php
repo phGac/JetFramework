@@ -7,14 +7,35 @@ use Jet\Security\Encrypt;
 
 class Session
 {
+    /**
+     * @var bool
+     */
     private $started;
+    /**
+     * @var bool
+     */
     private $encrypt;
+    /**
+     * @var array
+     */
     private $data;
 
-    function __construct()
+    /**
+     * @var string
+     */
+    private $secret;
+
+    /**
+     * Session constructor.
+     * @param bool $encrypt
+     * @param string|null $secret
+     */
+    function __construct($encrypt, $secret)
     {
         $this->started = false;
-        $this->encrypt = true;
+        $this->data = [];
+        $this->encrypt = $encrypt;
+        $this->secret = $secret;
     }
 
     function start($options = [])
@@ -25,7 +46,6 @@ class Session
             'name' => $options['name'] ?? 'KukiS',
             'cookie_httponly' => true
         ]);
-        $this->data = [];
         if(isset($_SESSION['_d'])) {
             $data = Encrypt::decrypt($_SESSION['_d'], 'AfgDrt6v35p7');
             $this->data = json_decode($data);
@@ -35,6 +55,7 @@ class Session
     /**
      * @param string $name
      * @param $value
+     * @throws Exception
      */
     function set($name, $value)
     {
@@ -65,9 +86,8 @@ class Session
 
     function save()
     {
-        $secret = (isset($_ENV['env']['encrypt']['secret'])) ? $_ENV['env']['encrypt']['secret'] : 'AfgDrt6v35p7';
         $data = json_encode($this->data, true);
-        $_SESSION['_d'] = Encrypt::encrypt($data, $secret);
+        $_SESSION['_d'] = Encrypt::encrypt($data, $this->secret);
     }
 
     function destroy()
