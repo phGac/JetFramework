@@ -51,10 +51,9 @@ class ViewRender
     /**
      * @param Html\HtmlParser $layout
      * @param Html\HtmlParser $template
-     * @param array $attributes
      * @throws Exception
      */
-    private function melt(&$layout, $template, $attributes)
+    private function melt(&$layout, $template)
     {
         $tags = $layout->findByTagNames('jet-container');
         /** @var Html\HtmlTag $container */
@@ -91,7 +90,7 @@ class ViewRender
         $parser_layout = new Html\HtmlParser( $this->renderTemplate($this->views_folder . DIRECTORY_SEPARATOR . $layout->attributes['path'], $attributes) );
         $this->addInlcudes($parser_layout, $attributes);
 
-        $this->melt($parser_layout, $parser_template, $attributes);
+        $this->melt($parser_layout, $parser_template);
 
         return $parser_layout->getHTMLFinal(true);
     }
