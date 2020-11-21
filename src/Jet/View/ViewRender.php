@@ -26,10 +26,15 @@ class ViewRender
 
     private function renderTemplate($path, $attributes)
     {
-        extract($attributes);
-        ob_start();
-        include $path;
-        return ob_get_clean();
+        if(is_file($path))
+        {
+            extract($attributes);
+            ob_start();
+            include $path;
+            return ob_get_clean();
+        }
+
+        throw new Exception('File not found: ' . $path);
     }
 
     /**
@@ -61,6 +66,7 @@ class ViewRender
         {
             try {
                 $tag_content = $template->find(['tagname' => 'jet-container', 'attributes' => ['name' => $container->attributes['name']], 'first' => true]);
+                if(! $tag_content) continue;
                 $layout->replace($container->toHtml(), $tag_content->content);
             } catch (Exception $e) {}
         }
@@ -76,7 +82,7 @@ class ViewRender
     function render($template, $attributes, $cache)
     {
         $folder = ($cache) ? $this->cache_folder : $this->views_folder;
-        $output = $this->renderTemplate($folder . DIRECTORY_SEPARATOR . $template, $attributes);
+        $output = $this->renderTemplate($folder . '/' . $template, $attributes);
         if($cache) return $output;
 
         $parser_template = new Html\HtmlParser($output);

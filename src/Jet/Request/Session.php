@@ -4,6 +4,7 @@ namespace Jet\Request;
 
 use Exception;
 use Jet\Security\Encrypt;
+use stdClass;
 
 class Session
 {
@@ -33,7 +34,7 @@ class Session
     function __construct($encrypt, $secret)
     {
         $this->started = false;
-        $this->data = [];
+        $this->data = new stdClass();
         $this->encrypt = $encrypt;
         $this->secret = $secret;
     }
@@ -47,7 +48,7 @@ class Session
             'cookie_httponly' => true
         ]);
         if(isset($_SESSION['_d'])) {
-            $data = Encrypt::decrypt($_SESSION['_d'], 'AfgDrt6v35p7');
+            $data = Encrypt::decrypt($_SESSION['_d'], $this->secret);
             $this->data = json_decode($data);
         }
     }
@@ -60,10 +61,15 @@ class Session
     function set($name, $value)
     {
         if(! $this->started) throw new Exception('Start session with `start` method');
-        if(gettype($value) !== 'object')
-            $this->data[$name] = $value;
-        else
-            $this->data[$name] = serialize($value);
+        if($value !== null) {
+            if(gettype($value) !== 'object' && ! is_array($value))
+                $this->data->{$name} = $value;
+            else
+                $this->data->{$name} = serialize($value);
+        }
+        else if(isset($this->data->{$name})) {
+            unset($this->data->{$name});
+        }
     }
 
     /**
@@ -74,10 +80,10 @@ class Session
     function get($name)
     {
         if(! $this->started) throw new Exception('Start session with `start` method');
-        if(! isset($this->data[$name])) return null;
+        if(! isset($this->data->{$name})) return null;
 
-        $data = $this->data[$name];
-        if(gettype($data) == 'string')  {
+        $data = $this->data->{$name};
+        if(is_string($data))  {
             $value = @unserialize($data);
             if($value !== false) $data = $value;
         }

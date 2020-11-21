@@ -1,0 +1,5 @@
+<?php
+
+$HOME = __DIR__;
+
+require_once __DIR__ . '/../bin/jet';

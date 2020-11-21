@@ -61,10 +61,10 @@ class HtmlParser
         }
 
         if(isset($options['tagname'])) {
-            $regex = "/(<{$options['tagname']}{$BLANKS}({$ATTRIBUTES}{$BLANKS}){0,}{$attrs}\/>)|((<{$options['tagname']}{$BLANKS}({$ATTRIBUTES}{$BLANKS}){0,}{$attrs}>)({$CONTENT})(<\/{$options['tagname']}>))/";
+            $regex = "/(<{$options['tagname']}{$BLANKS}({$ATTRIBUTES}{$BLANKS}){0,}{$attrs}\/>)|((<{$options['tagname']}{$BLANKS}({$ATTRIBUTES}{$BLANKS}){0,}{$attrs}>)({$CONTENT})(<\/{$options['tagname']}>))/u";
         }
         else if(! empty($attrs)) {
-            $regex = "/<[A-Za-z-]+ {0,}( [A-Za-z]+=\"[A-Za-z0-9-_:#=, \/\\\.]{0,}\"){0,}{$attrs} {0,}\/?>/";
+            $regex = "/<[A-Za-z-]+ {0,}( [A-Za-z]+=\"[A-Za-z0-9-_:#=, \/\\\.]{0,}\"){0,}{$attrs} {0,}\/?>/u";
         }
         else {
             throw new Exception('Invalid Options');

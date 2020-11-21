@@ -36,7 +36,7 @@ abstract class Entity
     }
 
     /**
-     * @param array $data
+     * @param array|stdClass $data
      * @param string|null $where
      * @return mixed
      */
@@ -45,6 +45,7 @@ abstract class Entity
     /**
      * @param array $data
      * @return mixed
+     * @throws EntityCreateFromFormError
      */
     function createFromForm($data)
     {

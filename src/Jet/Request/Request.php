@@ -2,7 +2,9 @@
 
 namespace Jet\Request;
 
+use Exception;
 use Jet\Request\Client\Ip;
+use Jet\Security\Token;
 use voku\helper\AntiXSS;
 
 class Request {
@@ -114,5 +116,41 @@ class Request {
     function isXssFound()
     {
         return $this->antiXss->isXssFound();
+    }
+
+    /**
+     * @param string $formId
+     * @return string
+     * @throws Exception
+     */
+    function setCsrf($formId)
+    {
+        $session = $this->getSession();
+        $csrf = Token::csrf();
+        $session->set('form:csrf:' . $formId, [ $csrf, time() ]);
+        $session->save();
+        return $csrf;
+    }
+
+    /**
+     * @param string $formId
+     * @param string $csrf
+     * @param int $limit expira en X segundos, por defecto 1 Hora (3600 segundos)
+     * @return bool
+     * @throws Exception
+     */
+    function isValidCsrf($formId, $csrf, $limit = 3600)
+    {
+        $session = $this->getSession();
+        $data = $session->get('form:csrf:' . $formId);
+        if($data == null) throw new Exception('FormId not found');
+        if($data[0] !== $csrf) return false;
+        if(time() >= ($data[1] + $limit)) {
+            $session->set('form:csrf:' . $formId, null);
+            $session->save();
+            return false;
+        }
+
+        return true;
     }
 }

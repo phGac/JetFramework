@@ -8,6 +8,7 @@ use Jet\Request\Response;
 interface Controller
 {
     function index(Request $req, Response $res);
+    function new_(Request $req, Response $res);
     function create(Request $req, Response $res);
     function show(Request $req, Response $res);
     function edit(Request $req, Response $res);

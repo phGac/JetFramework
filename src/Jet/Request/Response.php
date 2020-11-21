@@ -164,7 +164,7 @@ class Response {
      * @param callable|null $callback
      * @throws Exception
      */
-    public function render($template, array $params, callable $callback = null)
+    public function render($template, array $params = [], callable $callback = null)
     {
         $view = new View($template, $this->views_folder, $this->cache_folder);
         if($this->cache_time != null && ! $view->isCached()) $view->save($this->cache_time);

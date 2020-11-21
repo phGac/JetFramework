@@ -67,7 +67,7 @@ class HtmlTag
         $CONTENT = HtmlRegex::CONTENT;
         $BLANKS = HtmlRegex::BLANKS;
 
-        $regex = "/(<{$tagname}{$BLANKS}({$ATTRIBUTES}){$BLANKS}\/>)|((<{$tagname}{$BLANKS}({$ATTRIBUTES}){$BLANKS}>)({$CONTENT})(<\/{$tagname}>))/";
+        $regex = "/(<{$tagname}{$BLANKS}({$ATTRIBUTES}){$BLANKS}\/>)|((<{$tagname}{$BLANKS}({$ATTRIBUTES}){$BLANKS}>)({$CONTENT})(<\/{$tagname}>))/u";
         preg_match($regex, $html, $info);
         if(count($info) == 0) return null;
 
@@ -88,6 +88,8 @@ class HtmlTag
     }
 
     /**
+     * Append String to content property
+     *
      * @param string $html
      */
     function loadHtml($html)
@@ -98,7 +100,7 @@ class HtmlTag
         $this->prefix = $parts['prefix'];
         $this->suffix = $parts['suffix'];
         $this->content = $parts['content'];
-        $this->attributes = $parts['attributes'];
+        $this->attributes = ($parts['attributes'] !== null) ? $parts['attributes'] : [];
     }
 
     private function update()
@@ -118,6 +120,16 @@ class HtmlTag
             $this->suffix = null;
             $this->full = $this->prefix;
         }
+    }
+
+    /**
+     * @param string|HtmlTag $html
+     */
+    function append($html)
+    {
+        if($html instanceof HtmlTag)
+            $html = $html->toHtml();
+        $this->content .= $html;
     }
 
     /**
