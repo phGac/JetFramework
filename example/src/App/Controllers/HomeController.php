@@ -11,7 +11,7 @@ class HomeController implements Controller
 {
 	function index(Request $req, Response $res)
 	{
-	    $res->render('home/index.php');
+	    $res->render('home/index.php', [ 'title' => 'Funciona! :D' ]);
 	}
 
     function new_(Request $req, Response $res)

@@ -2,6 +2,6 @@
 
 <jet-container name="content">
 
-    <h1>Home</h1>
+    <h1>Home :3</h1>
 
 </jet-container>

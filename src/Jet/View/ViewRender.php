@@ -38,18 +38,22 @@ class ViewRender
     }
 
     /**
-     * @param HtmlParser $template
+     * @param HtmlParser $parser
      * @param array $attributes
      * @throws Exception
      */
-    private function addInlcudes(& $template, $attributes)
+    private function addInlcudes(& $parser, $attributes)
     {
         /** @var HtmlTag[] $tags */
-        $tags = $template->findByTagNames('jet-include');
+        $tags = $parser->findByTagNames('jet-include');
         foreach ($tags as $tag) {
-            $path = $this->views_folder . DIRECTORY_SEPARATOR . $tag->attributes['path'];
-            $include_output = $this->renderTemplate($path, $attributes); // new Html\HtmlParser(...)
-            $template->replace($tag->toHtml(), $include_output);
+            $attr_path = $tag->getAttr('path');
+            if(empty($attr_path)) throw new Exception('La etiqueta jet-include require del atributo `path`');
+
+            $path = $this->views_folder . '/' . $attr_path;
+            $include_output = $this->renderTemplate($path, $attributes);
+            $tag->setTagName('div', false);
+            $tag->innerHTML( $include_output );
         }
     }
 
@@ -64,11 +68,11 @@ class ViewRender
         /** @var Html\HtmlTag $container */
         foreach ($tags as $container)
         {
-            try {
-                $tag_content = $template->find(['tagname' => 'jet-container', 'attributes' => ['name' => $container->attributes['name']], 'first' => true]);
-                if(! $tag_content) continue;
-                $layout->replace($container->toHtml(), $tag_content->content);
-            } catch (Exception $e) {}
+            $tag_content = $template->findBy(['tagname' => 'jet-container', 'attr' => [ 'name' => $container->getAttr('name') ], 'first' => true]);
+            if(! $tag_content) continue;
+
+            $container->setTagName('div', false);
+            $container->content( $tag_content->content() );
         }
     }
 
@@ -89,16 +93,16 @@ class ViewRender
         $this->addInlcudes($parser_template, $attributes);
         /** @var Html\HtmlTag|null $layout */
         try {
-            $layout = $parser_template->find(['tagname' => 'jet-extends', 'first' => true]);
+            $layout = $parser_template->findBy([ 'tagname' => 'jet-extends', 'first' => true ]);
         } catch (Exception $e) {}
 
-        if($layout === null) return $parser_template->getHTMLFinal(false);
-        $parser_layout = new Html\HtmlParser( $this->renderTemplate($this->views_folder . DIRECTORY_SEPARATOR . $layout->attributes['path'], $attributes) );
+        if($layout === null) return $parser_template->toHTML(false);
+        $parser_layout = new Html\HtmlParser( $this->renderTemplate($this->views_folder . '/' . $layout->getAttr('path'), $attributes) );
         $this->addInlcudes($parser_layout, $attributes);
 
         $this->melt($parser_layout, $parser_template);
 
-        return $parser_layout->getHTMLFinal(true);
+        return $parser_layout->toHTML(false);
     }
 
     /**
@@ -112,13 +116,13 @@ class ViewRender
         $parser_template = new Html\HtmlParser($code);
         /** @var Html\HtmlTag|null $layout */
         try {
-            $layout = $parser_template->find(['tagname' => 'jet-extends', 'first' => true]);
+            $layout = $parser_template->findBy(['tagname' => 'jet-extends', 'first' => true]);
         } catch (Exception $e) {}
-        if($layout === null) return $parser_template->getHTMLFinal(true);
-        $parser_layout = new Html\HtmlParser( $this->getFileCode($this->views_folder . DIRECTORY_SEPARATOR . $layout->attributes['path']) );
+        if($layout === null) return $parser_template->toHTML(true);
+        $parser_layout = new Html\HtmlParser( $this->getFileCode($this->views_folder . DIRECTORY_SEPARATOR . $layout->getAttr('path')) );
 
         $this->melt($parser_layout, $parser_template);
 
-        return $parser_layout->getHTMLFinal(true);
+        return $parser_layout->toHTML(true);
     }
 }

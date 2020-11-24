@@ -3,141 +3,181 @@
 
 namespace Jet\View\Html;
 
-use Jet\View\Html\HtmlRegex;
 
-class HtmlTag
-{
-    public $tagname;
-    public $content;
-    public $attributes;
+use DOMElement;
+use DOMNode;
+use DOMText;
+use DOMNodeList;
 
-    private $full;
-    private $prefix;
-    private $suffix;
+class HtmlTag {
+    /** @var DOMElement|DOMNode */
+    private $node;
 
     /**
-     * @param string|null $full
+     * HtmlTag constructor.
+     * @param DOMElement|DOMNode $node
      */
-    function __construct($full = null)
+    function __construct($node)
     {
-        $this->full = $full;
-        $this->prefix = null;
-        $this->suffix = null;
-        $this->tagname = null;
-        $this->content = null;
-        $this->attributes = [];
-        if(is_string($full)) $this->loadHtml($full);
-    }
-
-    static function getTagName($html)
-    {
-        $TAG_NAME = HtmlRegex::TAG_NAME;
-        return (preg_match("/^{$TAG_NAME}/", $html, $matches)) ? $matches[1] : null;
-    }
-
-    static function getPrefixAttributes($html)
-    {
-        $ATTRIBUTES = HtmlRegex::ATTRIBUTES;
-        if(preg_match_all("/{$ATTRIBUTES}/", $html, $matches)) {
-            $attrs = [];
-            foreach ($matches[0] as $key => $value) {
-                $attrs[ $matches[1][ $key ] ] = $matches[2][ $key ];
-            }
-            return $attrs;
-        }
-
-        return null;
+        $this->node = $node;
     }
 
     /**
-     * @param string $html
-     * @param string $tagname
-     * @return array|null
-     */
-    static function getHtmlElementInfo($html, $tagname)
-    {
-        $data = [
-            'prefix' => null,
-            'suffix' => null,
-            'content' => null,
-            'attributes' => []
-        ];
-
-        $ATTRIBUTES = HtmlRegex::ATTRIBUTES;
-        $CONTENT = HtmlRegex::CONTENT;
-        $BLANKS = HtmlRegex::BLANKS;
-
-        $regex = "/(<{$tagname}{$BLANKS}({$ATTRIBUTES}){$BLANKS}\/>)|((<{$tagname}{$BLANKS}({$ATTRIBUTES}){$BLANKS}>)({$CONTENT})(<\/{$tagname}>))/u";
-        preg_match($regex, $html, $info);
-        if(count($info) == 0) return null;
-
-        $data['prefix'] = $info[8];
-        $data['suffix'] = (empty($info[15])) ? null : $info[15];
-        $data['content'] = (empty($info[14])) ? null : $info[14];
-
-        $attributes = [];
-        preg_match_all("/{$ATTRIBUTES}/", $data['prefix'], $attrs);
-        if($attrs && is_array($attrs[0])) {
-            foreach ($attrs[0] as $key => $value) {
-                $attributes[ $attrs[1][$key] ] = $attrs[2][$key];
-            }
-            $data['attributes'] = $attributes;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Append String to content property
+     * Clone node with same document (ownerDocument)
      *
-     * @param string $html
+     * @param DOMElement|DOMNode|DOMText $node
+     * @return DOMElement|DOMText
      */
-    function loadHtml($html)
+    private function cloneNode($node)
     {
-        $this->full = $html;
-        $this->tagname = self::getTagName($html);
-        $parts = self::getHtmlElementInfo($html, $this->tagname);
-        $this->prefix = $parts['prefix'];
-        $this->suffix = $parts['suffix'];
-        $this->content = $parts['content'];
-        $this->attributes = ($parts['attributes'] !== null) ? $parts['attributes'] : [];
+        if($node instanceof DOMText)
+            return $this->node->ownerDocument->createTextNode($node->data);
+
+        $clone = $this->node->ownerDocument->createElement($node->tagName);
+
+        $children = $node->childNodes;
+        for ($i = 0; $i < $children->length; $i++) {
+            $clone->appendChild( $this->node->ownerDocument->importNode($children->item($i), true) );
+        }
+        foreach ($node->attributes as $attr) {
+            $clone->setAttribute($attr->name, $attr->value);
+        }
+
+        return $clone;
     }
 
-    private function update()
+    /**
+     * @return DOMElement|DOMNode
+     */
+    function getNode()
     {
-        $attributes = [];
-        foreach ($this->attributes as $key => $value) {
-            $attributes[] = "$key=\"$value\"";
+        return $this->node;
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    function getAttr($name)
+    {
+        return $this->node->getAttribute($name);
+    }
+
+    /**
+     * @param string $name
+     * @param string|int $value
+     */
+    function setAttr($name, $value)
+    {
+        $this->node->setAttribute($name, $value);
+    }
+
+    /**
+     * Change TagName
+     *
+     * @param string $tagname
+     * @param false $keep_attrs
+     */
+    function setTagName($tagname, $keep_attrs = false)
+    {
+        $node =& $this->node;
+        $newnode = $node->ownerDocument->createElement($tagname);
+
+        $children = $node->childNodes;
+        while ($children->length > 0){
+            $newnode->appendChild( $node->ownerDocument->importNode($children->item(0), true) );
         }
-        $attributes_str = implode(' ', $attributes);
-        if($this->content != null || $this->suffix != null) {
-            $this->prefix = "<{$this->tagname} $attributes_str>";
-            $this->suffix = "</{$this->tagname}>";
-            $this->full = "{$this->prefix}{$this->content}{$this->suffix}";
+        if($keep_attrs) {
+            foreach ($node->attributes as $attr) {
+                $newnode->setAttribute($attr->name, $attr->value);
+            }
         }
-        else {
-            $this->prefix = "<{$this->tagname} $attributes_str/>";
-            $this->suffix = null;
-            $this->full = $this->prefix;
+
+        $node->parentNode->replaceChild($newnode, $node);
+        $node = $newnode;
+    }
+
+    /**
+     * Remove all attributes
+     */
+    function removeAttrs()
+    {
+        $attributes = $this->node->attributes;
+        while ($attributes->length) {
+            $this->node->removeAttribute($attributes->item(0)->name);
         }
     }
 
     /**
-     * @param string|HtmlTag $html
+     * Remove all content
      */
-    function append($html)
+    function removeChildren()
     {
-        if($html instanceof HtmlTag)
-            $html = $html->toHtml();
-        $this->content .= $html;
+        while($this->node->hasChildNodes()) {
+            $this->node->removeChild($this->node->firstChild);
+        }
     }
 
     /**
-     * @return string|null
+     * @return mixed
      */
-    function toHtml()
+    function outerHTML()
     {
-        $this->update();
-        return $this->full;
+        return $this->node->ownerDocument->saveHTML($this->node);
+    }
+
+    /**
+     * Get or set as string
+     *
+     * @param string|null $set
+     * @return string|void
+     */
+    function innerHTML($set = null)
+    {
+        if($set === null) {
+            $innerHTML = "";
+            foreach ($this->node->childNodes as $child) {
+                $innerHTML .= $this->node->ownerDocument->saveHTML($child);
+            }
+            return $innerHTML;
+        }
+        else if(is_string($set)) {
+            $parser = new HtmlParser($set);
+            $body = $parser->find('//body[1]')[0];
+            $this->content($body->content());
+        }
+    }
+
+    /**
+     * @param DOMNodeList|DOMNode|DOMText $set
+     */
+    function append($set)
+    {
+        if($set instanceof DOMNodeList) {
+            for ($i = 0; $i < $set->length; $i++) {
+                $node = $this->cloneNode( $set->item($i) );
+                $this->node->appendChild($node);
+            }
+            return;
+        }
+
+        if($set instanceof HtmlTag) $set = $set->getNode();
+
+        $node = $this->cloneNode($set);
+        $this->node->appendChild($node);
+    }
+
+    /**
+     * Get or set content as Nodes
+     *
+     * @param DOMNodeList|DOMNode|DOMText|null $set
+     * @return DOMNodeList|void
+     */
+    function content($set = null)
+    {
+        if($set === null) return $this->node->childNodes;
+
+        $this->removeChildren();
+        $this->append($set);
     }
 }
